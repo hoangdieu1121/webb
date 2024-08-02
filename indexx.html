@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tìm kiếm nâng cao</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Tìm kiếm công việc...">
+      <button id="search-button">Tìm kiếm</button>
+    </div>
+  
+    <div class="advanced-filters">
+      <!-- Vị trí -->
+      <div class="filter">
+        <label for="location">Vị trí:</label>
+        <select id="location" multiple>
+          <option value="tphcm">TP HCM</option>
+          <option value="hanoi">Hà Nội</option>
+          <option value="danang">Đà Nẵng</option>
+        </select>
+      </div>
+      
+      <!-- Kỹ năng -->
+      <div class="filter">
+        <label for="skills">Kỹ năng:</label>
+        <input type="text" id="skills" placeholder="Nhập kỹ năng...">
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="guide"> Hướng dẫn viên</label>
+          <label><input type="checkbox" value="manager"> Quản lý khách sạn</label>
+        </div>
+      </div>
+      
+      <!-- Kinh nghiệm -->
+      <div class="filter">
+        <label for="experience">Kinh nghiệm:</label>
+        <input type="range" id="experience" min="0" max="10" step="1" value="0">
+        <span id="experience-value">0 năm</span>
+      </div>
+      
+      <!-- Ngôn ngữ -->
+      <div class="filter">
+        <label for="languages">Ngôn ngữ:</label>
+        <input type="text" id="languages" placeholder="Nhập ngôn ngữ...">
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="english"> Tiếng Anh</label>
+          <label><input type="checkbox" value="french"> Tiếng Pháp</label>
+        </div>
+      </div>
+      
+      <button id="apply-filters">Áp dụng</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('experience').addEventListener('input', function() {
+      document.getElementById('experience-value').textContent = this.value + ' năm';
+    });
+
+    document.getElementById('apply-filters').addEventListener('click', function() {
+      let filters = {
+        location: Array.from(document.getElementById('location').selectedOptions).map(option => option.value),
+        skills: Array.from(document.querySelectorAll('#skills + .checkbox-group input:checked')).map(input => input.value),
+        experience: document.getElementById('experience').value,
+        languages: Array.from(document.querySelectorAll('#languages + .checkbox-group input:checked')).map(input => input.value),
+      };
+      console.log(filters);
+      // Thực hiện yêu cầu AJAX đến API backend
+      fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(filters),
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#search-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  font-size: 16px;
+}
+
+#search-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#search-button:hover {
+  background-color: #0056b3;
+}
+
+.advanced-filters {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter {
+  margin-bottom: 20px;
+}
+
+.filter label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+#location, #skills, #languages {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.checkbox-group {
+  margin-top: 10px;
+}
+
+.checkbox-group label {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+#experience {
+  width: 100%;
+}
+
+#apply-filters {
+  padding: 10px 20px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#apply-filters:hover {
+  background-color: #218838;
+}
